@@ -1,0 +1,127 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    min-height: 100vh;
+    padding-bottom: 5rem;
+}
+
+@media (min-width: 768px) {
+    body { padding-bottom: 0; }
+}
+
+.btn-primary {
+    background-color: #fc5200;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: background-color 0.2s;
+    min-height: 48px;
+}
+
+.btn-primary:hover { background-color: #e04700; }
+
+.btn-primary:disabled {
+    background-color: #fd9e6b;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background-color: #F3F4F6;
+    color: #1F2937;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: background-color 0.2s;
+    min-height: 48px;
+}
+
+.btn-secondary:hover { background-color: #E5E7EB; }
+
+.card {
+    background-color: #FFFFFF;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border: 1px solid #E5E7EB;
+}
+
+.input-field {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: #FFFFFF;
+    border: 1px solid #D1D5DB;
+    border-radius: 10px;
+    color: #1F2937;
+    font-size: 16px;
+    transition: border-color 0.2s;
+    min-height: 48px;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: #fc5200;
+    box-shadow: 0 0 0 3px rgba(252, 82, 0, 0.1);
+}
+
+.input-field::placeholder { color: #9CA3AF; }
+
+.skeleton {
+    background: linear-gradient(90deg, #F3F4F6 25%, #E5E7EB 50%, #F3F4F6 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.stat-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #6B7280;
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@media (max-width: 767px) {
+    .hide-mobile { display: none !important; }
+}
+
+@media (min-width: 768px) {
+    .hide-desktop { display: none !important; }
+}
+
+.tracking-btn {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.tracking-btn:active { transform: scale(0.95); }
+
+.leaflet-container {
+    border-radius: 12px;
+}
