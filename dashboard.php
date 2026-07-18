@@ -37,6 +37,22 @@ foreach ($chart_rows as $row) {
     $values[] = (float)$row['total_km'];
 }
 
+$pace_chart = $pdo->prepare("
+    SELECT DATE_FORMAT(date, '%Y-%m-%d') as day, AVG(pace) as avg_pace
+    FROM activities WHERE user_id = ? 
+    AND date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+    GROUP BY day ORDER BY day ASC
+");
+$pace_chart->execute([$user_id]);
+$pace_rows = $pace_chart->fetchAll();
+
+$paceLabels = [];
+$paceValues = [];
+foreach ($pace_rows as $row) {
+    $paceLabels[] = $row['day'];
+    $paceValues[] = (float)$row['avg_pace'];
+}
+
 $title = 'Dashboard - Run Tracker';
 ?>
 <?php include 'includes/header.php'; ?>
@@ -77,10 +93,20 @@ $title = 'Dashboard - Run Tracker';
         </div>
     </div>
 
-    <div class="card mb-6">
-        <h2 class="text-lg font-semibold mb-4">Tren 30 Hari</h2>
-        <div class="relative" style="height: 250px;">
-            <canvas id="trendChart"></canvas>
+    <div class="card mb-6 p-0 overflow-hidden">
+        <div class="flex border-b border-gray-200">
+            <button class="tab-btn flex-1 py-3 text-sm font-semibold text-center transition-colors bg-[#fc5200] text-white" data-tab="0">Jarak</button>
+            <button class="tab-btn flex-1 py-3 text-sm font-semibold text-center transition-colors text-[#9CA3AF] hover:text-[#1F2937]" data-tab="1">Pace</button>
+        </div>
+        <div class="p-6">
+            <div id="chartContainer" class="relative" style="height: 250px;">
+                <canvas id="distChart" class="absolute inset-0 w-full h-full transition-opacity duration-300"></canvas>
+                <canvas id="paceChart" class="absolute inset-0 w-full h-full transition-opacity duration-300 opacity-0 pointer-events-none"></canvas>
+            </div>
+        </div>
+        <div class="flex justify-center gap-2 pb-4">
+            <span class="dot w-2 h-2 rounded-full bg-[#fc5200]"></span>
+            <span class="dot w-2 h-2 rounded-full bg-gray-300"></span>
         </div>
     </div>
 
@@ -123,5 +149,7 @@ $title = 'Dashboard - Run Tracker';
 <script>
 const labels = <?= json_encode($labels) ?>;
 const values = <?= json_encode($values) ?>;
+const paceLabels = <?= json_encode($paceLabels) ?>;
+const paceValues = <?= json_encode($paceValues) ?>;
 </script>
 <script src="assets/js/chart.js"></script>
