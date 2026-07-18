@@ -20,7 +20,9 @@ if (!$activity) {
     redirect('history.php');
 }
 
-$route_path = json_decode($activity['route_path'], true);
+$route_path = json_decode($activity['route_path'] ?? '', true) ?: [];
+$pace_per_km = json_decode($activity['pace_per_km'] ?? '', true) ?: [];
+$distance_markers = json_decode($activity['distance_markers'] ?? '', true) ?: [];
 
 $title = 'Detail - Run Tracker';
 ?>
@@ -29,7 +31,7 @@ $title = 'Detail - Run Tracker';
 
 <div class="max-w-4xl mx-auto px-4 py-6 pb-24 md:pb-6">
     <div class="flex items-center gap-3 mb-6">
-        <a href="history.php" class="text-[#9CA3AF] hover:text-white transition-colors">
+        <a href="history.php" class="text-[#9CA3AF] hover:text-[#1F2937] transition-colors">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
         </a>
         <h1 class="text-2xl font-bold">Detail Aktivitas</h1>
@@ -77,6 +79,15 @@ $title = 'Detail - Run Tracker';
         </form>
     </div>
 
+    <?php if (!empty($pace_per_km)): ?>
+        <div class="card mb-6">
+            <h2 class="text-lg font-semibold mb-4">Pace per Kilometer</h2>
+            <div class="relative" style="height: 220px;">
+                <canvas id="paceChart"></canvas>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <?php if ($route_path && count($route_path) > 0): ?>
         <div class="card">
             <h2 class="text-lg font-semibold mb-4">Rute Lari</h2>
@@ -87,6 +98,8 @@ $title = 'Detail - Run Tracker';
 
 <?php if ($route_path && count($route_path) > 0): ?>
 <script>
+const pacePerKm = <?= json_encode($pace_per_km) ?>;
+const distanceMarkers = <?= json_encode($distance_markers) ?>;
 document.addEventListener('DOMContentLoaded', function () {
     const routeCoords = <?= json_encode($route_path) ?>;
     const map = L.map('routeMap', {
@@ -115,8 +128,88 @@ document.addEventListener('DOMContentLoaded', function () {
         })
     }).addTo(map).bindPopup('Selesai');
 
+    if (distanceMarkers && distanceMarkers.length > 0) {
+        distanceMarkers.forEach(function (m) {
+            if (m.lat && m.lng) {
+                L.marker([m.lat, m.lng], {
+                    icon: L.divIcon({
+                        className: 'km-marker',
+                        html: '<div style="background:#fc5200;color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);">' + m.km + '</div>',
+                        iconSize: [28, 28],
+                        iconAnchor: [14, 14]
+                    })
+                }).addTo(map).bindPopup('KM ' + m.km);
+            }
+        });
+    }
+
     map.fitBounds(L.polyline(routeCoords).getBounds().pad(0.1));
     setTimeout(() => map.invalidateSize(), 300);
+});
+</script>
+<?php endif; ?>
+
+<?php if (!empty($pace_per_km)): ?>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const canvas = document.getElementById('paceChart');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    const labels = pacePerKm.map(function (p) { return 'KM ' + p.km; });
+    const data = pacePerKm.map(function (p) {
+        var parts = p.pace.split(':');
+        return parseInt(parts[0]) + parseInt(parts[1]) / 60;
+    });
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Pace (min/km)',
+                data: data,
+                backgroundColor: '#fc5200',
+                borderRadius: 6,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function (ctx) {
+                            const m = Math.floor(ctx.raw);
+                            const s = Math.round((ctx.raw - m) * 60);
+                            return 'Pace: ' + m + ':' + String(s).padStart(2, '0') + ' /km';
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#6B7280', font: { size: 11 } }
+                },
+                y: {
+                    reverse: true,
+                    grid: { color: 'rgba(0,0,0,0.06)' },
+                    ticks: {
+                        color: '#6B7280',
+                        font: { size: 11 },
+                        callback: function (v) {
+                            const m = Math.floor(v);
+                            const s = Math.round((v - m) * 60);
+                            return m + ':' + String(s).padStart(2, '0');
+                        }
+                    }
+                }
+            }
+        }
+    });
 });
 </script>
 <?php endif; ?>

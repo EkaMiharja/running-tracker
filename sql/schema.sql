@@ -18,6 +18,8 @@ CREATE TABLE activities (
     pace DECIMAL(5,2) NOT NULL COMMENT 'min/km',
     notes TEXT,
     route_path JSON,
+    pace_per_km JSON COMMENT '[{"km":1,"pace":"5:12","time":"12:45"}]',
+    distance_markers JSON COMMENT '[{"km":1,"lat":-6.2088,"lng":106.8456}]',
     type ENUM('manual', 'gps') DEFAULT 'manual',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE

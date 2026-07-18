@@ -32,6 +32,12 @@ document.addEventListener('DOMContentLoaded', function () {
     let initialLocationSet = false;
     let pausedTime = 0;
     let pauseStartedAt = null;
+    let kmMarkers = [];
+    let pacePerKm = [];
+    let distanceMarkers = [];
+    let lastKmThreshold = 0;
+    let kmStartTime = null;
+    let kmStartPos = null;
 
     function setGpsStatus(ok) {
         if (ok) {
@@ -111,8 +117,49 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             gpsNoiseCount = 0;
 
+            const prevKm = Math.floor(totalDistance);
             totalDistance += d;
             updateStats();
+
+            const currentKm = Math.floor(totalDistance);
+            if (currentKm > lastKmThreshold) {
+                const segTime = kmStartTime ? (Date.now() - pausedTime - kmStartTime) / 1000 : 0;
+                const segDist = currentKm - (kmStartPos ? lastKmThreshold : 0);
+                const segPaceMin = segDist > 0 ? segTime / 60 / segDist : 0;
+                const cumTime = Math.round((Date.now() - pausedTime - startTime) / 1000);
+                const cumMins = Math.floor(cumTime / 60);
+                const cumSecs = cumTime % 60;
+
+                const paceMins = Math.floor(segPaceMin);
+                const paceSecs = Math.round((segPaceMin - paceMins) * 60);
+                const paceStr = paceMins + ':' + String(paceSecs).padStart(2, '0');
+
+                pacePerKm.push({
+                    km: currentKm,
+                    pace: paceStr,
+                    time: cumMins + ':' + String(cumSecs).padStart(2, '0')
+                });
+
+                distanceMarkers.push({
+                    km: currentKm,
+                    lat: lat,
+                    lng: lng
+                });
+
+                const markerIcon = L.divIcon({
+                    className: 'km-marker',
+                    html: '<div style="background:#fc5200;color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);">' + currentKm + '</div>',
+                    iconSize: [28, 28],
+                    iconAnchor: [14, 14]
+                });
+
+                const marker = L.marker([lat, lng], { icon: markerIcon }).addTo(map);
+                kmMarkers.push(marker);
+
+                lastKmThreshold = currentKm;
+                kmStartTime = Date.now() - pausedTime;
+                kmStartPos = [lat, lng];
+            }
 
             if (d > 0.002) {
                 pathCoords.push([lat, lng]);
@@ -153,7 +200,15 @@ document.addEventListener('DOMContentLoaded', function () {
         pathCoords = [];
         pausedTime = 0;
         pauseStartedAt = null;
+        lastKmThreshold = 0;
+        pacePerKm = [];
+        distanceMarkers = [];
+        kmStartTime = null;
+        kmStartPos = null;
         startTime = Date.now();
+
+        kmMarkers.forEach(function (m) { map.removeLayer(m); });
+        kmMarkers = [];
 
         if (polyline) { map.removeLayer(polyline); polyline = null; }
 
@@ -199,6 +254,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const pace = distance > 0 ? duration / 60 / distance : 0;
         const routeJson = pathCoords.length > 0 ? JSON.stringify(pathCoords) : null;
 
+        const paceKm = distance > 1 && pacePerKm.length > 0 ? pacePerKm : [];
+        const distMarkers = distanceMarkers.length > 0 ? distanceMarkers : [];
+
         fetch('../api/save_activity.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -207,6 +265,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 duration: duration,
                 pace: pace.toFixed(2),
                 route_path: routeJson,
+                pace_per_km: paceKm,
+                distance_markers: distMarkers,
                 type: 'gps'
             })
         })
