@@ -123,10 +123,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const currentKm = Math.floor(totalDistance);
             if (currentKm > lastKmThreshold) {
-                const segTime = kmStartTime ? (Date.now() - pausedTime - kmStartTime) / 1000 : 0;
+                const currentTime = Date.now() - pausedTime;
+                const segTime = kmStartTime ? (currentTime - kmStartTime) / 1000 : (currentTime - startTime) / 1000;
                 const segDist = currentKm - (kmStartPos ? lastKmThreshold : 0);
                 const segPaceMin = segDist > 0 ? segTime / 60 / segDist : 0;
-                const cumTime = Math.round((Date.now() - pausedTime - startTime) / 1000);
+                const cumTime = Math.round((currentTime - startTime) / 1000);
                 const cumMins = Math.floor(cumTime / 60);
                 const cumSecs = cumTime % 60;
 

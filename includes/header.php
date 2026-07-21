@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $title ?? 'Run Tracker' ?></title>
+<?php 
+$docRoot = rtrim($_SERVER['DOCUMENT_ROOT'], '\\/');
+$baseUrl = substr(dirname(__DIR__), strlen($docRoot));
+?>
+    <link rel="apple-touch-icon" sizes="180x180" href="<?= $baseUrl ?>/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?= $baseUrl ?>/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?= $baseUrl ?>/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="<?= $baseUrl ?>/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="<?= $baseUrl ?>/android-chrome-512x512.png">
+    <link rel="icon" href="<?= $baseUrl ?>/favicon.ico">
+    <link rel="manifest" href="<?= $baseUrl ?>/site.webmanifest">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {

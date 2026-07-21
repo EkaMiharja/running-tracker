@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Landing Pages</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="landing.css">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="../android-chrome-512x512.png">
+<link rel="icon" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
+</head>
+<body>
+
+<svg class="grain" width="100%" height="100%">
+  <filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="5" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
+  <rect width="100%" height="100%" filter="url(#n)"/>
+</svg>
+<div class="atmosphere"></div>
+
+<!-- Nav -->
+<nav class="top-nav" id="topNav">
+  <a href="#" class="nav-brand">Run<span>Tracker</span></a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#testimonials">Development Goals</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <a href="../login.php" class="nav-cta">Get Started</a>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+    <span class="toggle-bar"></span><span class="toggle-bar"></span>
+  </button>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-inner">
+    <div class="mobile-menu-links">
+      <a href="#" class="mobile-menu-link" data-index="01">Home</a>
+      <a href="#features" class="mobile-menu-link" data-index="02">Features</a>
+      <a href="#testimonials" class="mobile-menu-link" data-index="04">Development Goals</a>
+      <a href="#faq" class="mobile-menu-link" data-index="06">FAQ</a>
+      <a href="../login.php" class="mobile-menu-link" data-index="07">Get Started</a>
+    </div>
+    <div class="mobile-menu-footer">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+</div>
+
+<!-- Side Panels -->
+<nav class="side-panel left" aria-label="Scroll indicators">
+  <span class="side-label">Scroll</span>
+  <div class="side-track"><div class="side-track-fill" id="leftTrack"></div></div>
+  <div class="side-dot active"></div>
+  <div class="side-dot"></div>
+  <div class="side-dot"></div>
+  <div class="side-dot"></div>
+  <div class="side-dot"></div>
+  <div class="side-dot"></div>
+  <div class="side-readout" id="scrollPct">00</div>
+</nav>
+
+<nav class="side-panel right" aria-label="Status indicators">
+  <span class="side-label">Status</span>
+  <div class="side-track"><div class="side-track-fill" id="rightTrack"></div></div>
+  <div class="side-dot"></div>
+  <div class="side-dot"></div>
+  <div class="side-dot active"></div>
+  <div class="side-dot"></div>
+  <div class="side-dot"></div>
+  <div class="side-dot"></div>
+  <div class="side-readout">LMN</div>
+</nav>
+
+<main class="main">
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero" id="hero">
+    <div class="hero-grid"></div>
+    <h1>Every Mile<br><em>Every Smile </em></h1>
+    <p class="hero-sub">
+      Running Tracker records every run, measures your progress, and helps achieve fitness goals through simple tracking every single day with confidence.
+    </p>
+    <div class="hero-ctas">
+      <a href="../login.php" class="btn-primary">Start Tracking Now</a>
+      <a href="#features" class="btn-secondary">See All Features Here</a>
+    </div>
+    <div class="hero-metrics">
+      <div class="metric">
+        <div class="metric-value"><span class="counter" data-target="100" data-decimals="0">0</span><span>+</span></div>
+        <div class="metric-label">Running Sessions</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value"><span class="counter" data-target="10" data-decimals="0">0</span><span>K +</span></div>
+        <div class="metric-label">Distance Tracked</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value"><span class="counter" data-target="24" data-decimals="0">0</span><span>/ 7</span></div>
+        <div class="metric-label">Data Available</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ LOGO TICKER ═══ -->
+  <div class="logo-ticker reveal">
+    <div class="logo-ticker-label">Trusted by forward-thinking teams</div>
+    <div class="ticker-track" id="tickerTrack">
+      <span class="ticker-item">Beginners</span><span class="ticker-dot"></span>
+      <span class="ticker-item">Joggers</span><span class="ticker-dot"></span>
+      <span class="ticker-item">Daily Runners</span><span class="ticker-dot"></span>
+      <span class="ticker-item">Marathon Training</span><span class="ticker-dot"></span>
+      <span class="ticker-item">Fitness Goals</span><span class="ticker-dot"></span>
+      <span class="ticker-item">Healthy Lifestyle</span><span class="ticker-dot"></span>
+      <span class="ticker-item">Personal Progress</span><span class="ticker-dot"></span>
+      <span class="ticker-item">Running Community</span><span class="ticker-dot"></span>
+      <!-- Duplicated for seamless loop -->
+      <span class="ticker-item">Beginners</span><span class="ticker-dot"></span>
+      <span class="ticker-item">Joggers</span><span class="ticker-dot"></span>
+      <span class="ticker-item">Daily Runners</span><span class="ticker-dot"></span>
+      <span class="ticker-item">Marathon Training</span><span class="ticker-dot"></span>
+      <span class="ticker-item">Fitness Goals</span><span class="ticker-dot"></span>
+      <span class="ticker-item">Healthy Lifestyle</span><span class="ticker-dot"></span>
+      <span class="ticker-item">Personal Progress</span><span class="ticker-dot"></span>
+      <span class="ticker-item">Running Community</span><span class="ticker-dot"></span>
+    </div>
+  </div>
+
+  <div class="silk-divider reveal"></div>
+
+  <!-- ═══ FEATURES ═══ -->
+  <section class="section" id="features">
+    <div class="feature reveal">
+      <div class="feature-visual">
+        <img src="images/tm-luminary-01.jpg" alt="Running activity tracking">
+      </div>
+      <div class="feature-content">
+        <div class="feature-number">01</div>
+        <p class="section-tag">Run Tracking</p>
+        <h2 class="section-title">Track every run <strong>with confidence daily</strong></h2>
+        <p class="section-body">
+          Record runs manually or with GPS tracking. Calculate pace per kilometer automatically while storing every activity securely for future analysis anytime.
+        </p>
+      </div>
+    </div>
+
+    <div class="feature reverse reveal">
+      <div class="feature-visual">
+        <img src="images/tm-luminary-02.jpg" alt="Running trends analytics">
+      </div>
+      <div class="feature-content">
+        <div class="feature-number">02</div>
+        <p class="section-tag">Progress Trends</p>
+        <h2 class="section-title">View thirty-day trends <strong>with clarity instantly</strong></h2>
+        <p class="section-body">
+          Interactive charts display distance and pace trends over thirty days helping monitor consistent improvement every single run.
+        </p>
+      </div>
+    </div>
+
+    <div class="feature reveal">
+      <div class="feature-visual">
+        <img src="images/tm-luminary-03.jpg" alt="Pace per kilometer analysis">
+      </div>
+      <div class="feature-content">
+        <div class="feature-number">03</div>
+        <p class="section-tag">Detailed Analytics</p>
+        <h2 class="section-title">Analyze every kilometer <strong>with detailed charts</strong></h2>
+        <p class="section-body">
+          Review pace per kilometer through detailed split charts for every recorded run to identify strengths and improve performance over time confidently.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="silk-divider reveal"></div>
+
+<!-- ═══ DEVELOPMENT PREVIEW ═══ -->
+  <section class="section section-center" id="testimonials">
+    <p class="section-tag reveal">Development Goals</p>
+    <h2 class="section-title reveal reveal-d1">Designed to support <strong>every runner</strong></h2>
+
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal reveal-d1">
+        <p class="testimonial-quote">
+          "Current development focuses on accurate GPS tracking, manual activity logging,
+          distance measurement, and automatic pace calculation for every recorded run."
+        </p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">01</div>
+          <div>
+            <div class="testimonial-name">Current Focus</div>
+            <div class="testimonial-role">Core Running Features</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card reveal reveal-d2">
+        <p class="testimonial-quote">
+          "Interactive analytics display thirty-day distance trends, pace history,
+          and detailed pace per kilometer charts to help monitor running progress."
+        </p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">02</div>
+          <div>
+            <div class="testimonial-name">Analytics</div>
+            <div class="testimonial-role">Performance Insights</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card reveal reveal-d3">
+        <p class="testimonial-quote">
+          "Future updates will improve activity management, expand performance analysis,
+          and deliver an even better running experience for every user."
+        </p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">03</div>
+          <div>
+            <div class="testimonial-name">Future Plans</div>
+            <div class="testimonial-role">Ongoing Development</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="silk-divider reveal"></div>
+
+  <!-- ═══ FAQ ═══ -->
+  <section class="section section-center" id="faq">
+    <p class="section-tag reveal">Frequently Asked</p>
+    <h2 class="section-title reveal reveal-d1">Questions users ask <strong>most often</strong></h2>
+
+    <div class="faq-list reveal reveal-d2">
+      <div class="faq-controls">
+        <button class="faq-toggle-all" id="faqToggleAll">Expand All</button>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">Can I record runs without GPS?<span class="faq-icon"></span></button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Yes. Running Tracker supports manual activity recording as well as real-time GPS tracking. You can enter running information manually or allow GPS to calculate your distance and pace automatically during each session.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">How is my running pace calculated?<span class="faq-icon"></span></button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Pace is calculated automatically using your total distance and running time. The application also provides pace per kilometer, making it easier to evaluate consistency and compare performance across different runs.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">Can I view my running progress?<span class="faq-icon"></span></button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Yes. Running Tracker displays interactive charts showing your distance and pace trends over the last thirty days, helping you monitor improvements and identify consistent training patterns over time.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">What statistics are available now?<span class="faq-icon"></span></button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            The current prototype includes distance tracking, pace calculation, pace per kilometer analysis, and thirty-day trend charts. Additional statistics and performance insights are planned for future development updates.
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">Is Running Tracker still evolving?<span class="faq-icon"></span></button>
+        <div class="faq-answer">
+          <div class="faq-answer-inner">
+            Yes. This website represents an active prototype under development. Existing features continue to be refined while new capabilities will be added based on testing, feedback, and future project requirements.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>  
+
+  <div class="silk-divider reveal"></div>
+
+  <!-- ═══ FOOTER CTA ═══ -->
+<section class="footer-cta" id="cta">
+  <p class="section-tag reveal">Start Running</p>
+
+  <h2 class="section-title reveal reveal-d1">
+    Every great running<br><strong>journey begins today</strong>
+  </h2>
+
+  <p class="section-body reveal reveal-d2" style="margin: 0 auto;">
+    Track every run. Measure every kilometer. Improve with every step.
+  </p>
+
+  <div class="footer-ctas reveal reveal-d3">
+    <a href="../login.php" class="btn-primary">Get Started</a>
+    <a href="#features" class="btn-secondary">Explore Features</a>
+  </div>
+
+  <div class="footer-bar reveal reveal-d4" style="margin-top: 80px;">
+    <div class="footer-brand">Running Tracker &mdash; 2026</div>
+
+    <div class="footer-links">
+      <a href="#">Home</a>
+      <a href="#features">Features</a>
+      <a href="#faq">FAQ</a>
+      <span class="footer-credit">
+        Developed by <strong>M. Eka Miharja</strong>
+      </span>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="landing.js"></script>
+</body>
+</html>

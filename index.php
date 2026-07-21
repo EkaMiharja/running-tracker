@@ -5,4 +5,4 @@ require_once 'includes/auth.php';
 if (isLoggedIn()) {
     redirect('dashboard.php');
 }
-redirect('login.php');
+redirect('landing/index.html');
