@@ -90,6 +90,5 @@ run-tracker/
 ## Desain
 
 - **Mobile-first**, dioptimalkan untuk penggunaan saat berlari
-- Dark mode penuh dengan aksen **Emerald Green** (`#10B981`) dan **Sky Blue** (`#0EA5E9`)
 - Navigasi bottom bar di mobile, sidebar di desktop
 - Tombol besar (min 48px) untuk kemudahan sentuhan
