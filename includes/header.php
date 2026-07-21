@@ -37,6 +37,6 @@ $baseUrl = substr(dirname(__DIR__), strlen($docRoot));
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>/assets/css/style.css">
 </head>
 <body class="bg-white text-[#1F2937] font-inter">

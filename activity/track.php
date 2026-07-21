@@ -37,18 +37,29 @@ $title = 'Lacak Lari - Run Tracker';
                     <p class="text-xs text-[#9CA3AF]">/km</p>
                 </div>
             </div>
-            <div class="flex justify-center gap-6">
-                <button id="trackStart" class="tracking-btn bg-[#fc5200] text-white hover:bg-[#e04700] shadow-lg shadow-[#fc5200]/30">
-                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <div id="startContainer">
+                <button id="trackStart" class="start-btn">
+                    <span>START RUNNING</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                    </svg>
                 </button>
-                <button id="trackPause" class="tracking-btn bg-[#F59E0B] text-white hover:bg-[#D97706] shadow-lg shadow-[#F59E0B]/30 hidden">
-                    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+            </div>
+
+            <div id="controlBar" class="hidden control-bar">
+                <button id="trackPause" class="ctrl-btn ctrl-btn-pause">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                    </svg>
+                    <span>PAUSE</span>
                 </button>
-                <button id="trackResume" class="tracking-btn bg-[#fc5200] text-white hover:bg-[#e04700] shadow-lg shadow-[#fc5200]/30 hidden">
-                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                <button id="trackLock" class="ctrl-btn ctrl-btn-lock">
+                    <svg id="lockIcon" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/>
+                    </svg>
                 </button>
-                <button id="trackStop" class="tracking-btn bg-[#EF4444] text-white hover:bg-[#DC2626] shadow-lg shadow-[#EF4444]/30 hidden">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                <button id="trackFinish" class="ctrl-btn ctrl-btn-finish" disabled>
+                    FINISH
                 </button>
             </div>
         </div>

@@ -106,21 +106,110 @@ body {
     .hide-desktop { display: none !important; }
 }
 
-.tracking-btn {
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
+.start-btn {
+    width: 100%;
+    padding: 1rem 2rem;
+    background: #fc5200;
+    color: white;
+    font-size: 1.125rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-radius: 999px;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 10px;
+    box-shadow: 0 4px 20px rgba(252, 82, 0, 0.35);
     transition: all 0.2s;
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    cursor: pointer;
+    border: none;
 }
 
-.tracking-btn:active { transform: scale(0.95); }
+.start-btn:hover {
+    background: #e04700;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(252, 82, 0, 0.45);
+}
+
+.start-btn:active { transform: scale(0.97); }
+
+.control-bar {
+    display: flex;
+    height: 56px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.ctrl-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+    outline: none;
+}
+
+.ctrl-btn:active { transform: scale(0.96); }
+
+.ctrl-btn-pause {
+    background: #FFFFFF;
+    color: #1F2937;
+    border: 2px solid #D1D5DB;
+    border-right: none;
+    border-radius: 16px 0 0 16px;
+}
+
+.ctrl-btn-pause:hover { background: #F9FAFB; }
+
+.ctrl-btn-pause:disabled {
+    background: #E5E7EB;
+    color: #9CA3AF;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.ctrl-btn-pause.resume-state {
+    background: #fc5200;
+    color: white;
+    border-color: #fc5200;
+}
+
+.ctrl-btn-lock {
+    background: #000000;
+    color: white;
+    min-width: 56px;
+}
+
+.ctrl-btn-lock.unlocked {
+    background: #10B981;
+}
+
+.ctrl-btn-finish {
+    background: #6B7280;
+    color: white;
+    border-radius: 0 16px 16px 0;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.ctrl-btn-finish:not(:disabled) {
+    background: #FF3B30;
+    opacity: 1;
+    cursor: pointer;
+}
+
+.ctrl-btn-finish:not(:disabled):hover {
+    background: #DC2626;
+}
 
 .leaflet-container {
     border-radius: 12px;

@@ -10,8 +10,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const startBtn = document.getElementById('trackStart');
     const pauseBtn = document.getElementById('trackPause');
-    const resumeBtn = document.getElementById('trackResume');
-    const stopBtn = document.getElementById('trackStop');
+    const lockBtn = document.getElementById('trackLock');
+    const lockIcon = document.getElementById('lockIcon');
+    const finishBtn = document.getElementById('trackFinish');
+    const startContainer = document.getElementById('startContainer');
+    const controlBar = document.getElementById('controlBar');
     const distEl = document.getElementById('trackDistance');
     const timeEl = document.getElementById('trackTime');
     const paceEl = document.getElementById('trackPace');
@@ -20,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let tracking = false;
     let paused = false;
+    let locked = true;
     let watchId = null;
     let pathCoords = [];
     let polyline = null;
@@ -195,6 +199,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function startTracking() {
         tracking = true;
         paused = false;
+        locked = true;
         totalDistance = 0;
         elapsedSeconds = 0;
         lastPos = null;
@@ -214,10 +219,16 @@ document.addEventListener('DOMContentLoaded', function () {
         if (polyline) { map.removeLayer(polyline); polyline = null; }
 
         updateStats();
-        startBtn.classList.add('hidden');
-        pauseBtn.classList.remove('hidden');
-        stopBtn.classList.remove('hidden');
-        resumeBtn.classList.add('hidden');
+
+        startContainer.classList.add('hidden');
+        controlBar.classList.remove('hidden');
+        finishBtn.disabled = true;
+        finishBtn.classList.remove('unlocked');
+        lockBtn.classList.remove('unlocked');
+        lockIcon.innerHTML = '<path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/>';
+
+        pauseBtn.innerHTML = '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> <span>PAUSE</span>';
+        pauseBtn.classList.remove('resume-state');
 
         timerInterval = setInterval(() => {
             if (!paused) {
@@ -227,24 +238,44 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 200);
     }
 
-    function pauseTracking() {
-        paused = true;
-        pauseStartedAt = Date.now();
-        pauseBtn.classList.add('hidden');
-        resumeBtn.classList.remove('hidden');
-        stopBtn.classList.remove('hidden');
+    function togglePause() {
+        if (!tracking || locked) return;
+
+        if (paused) {
+            paused = false;
+            pausedTime += Date.now() - pauseStartedAt;
+            pauseStartedAt = null;
+            pauseBtn.innerHTML = '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> <span>PAUSE</span>';
+            pauseBtn.classList.remove('resume-state');
+        } else {
+            paused = true;
+            pauseStartedAt = Date.now();
+            pauseBtn.innerHTML = '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> <span>RESUME</span>';
+            pauseBtn.classList.add('resume-state');
+        }
     }
 
-    function resumeTracking() {
-        paused = false;
-        pausedTime += Date.now() - pauseStartedAt;
-        pauseStartedAt = null;
-        resumeBtn.classList.add('hidden');
-        pauseBtn.classList.remove('hidden');
-        stopBtn.classList.remove('hidden');
+    function toggleLock() {
+        if (!tracking) return;
+
+        if (locked) {
+            locked = false;
+            finishBtn.disabled = false;
+            pauseBtn.disabled = false;
+            lockBtn.classList.add('unlocked');
+            lockIcon.innerHTML = '<path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z"/>';
+        } else {
+            locked = true;
+            finishBtn.disabled = true;
+            pauseBtn.disabled = true;
+            lockBtn.classList.remove('unlocked');
+            lockIcon.innerHTML = '<path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/>';
+        }
     }
 
-    function stopTracking() {
+    function finishRun() {
+        if (locked) return;
+
         tracking = false;
         paused = false;
         if (watchId) { navigator.geolocation.clearWatch(watchId); watchId = null; }
@@ -287,19 +318,26 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function resetUI() {
-        startBtn.classList.remove('hidden');
-        pauseBtn.classList.add('hidden');
-        resumeBtn.classList.add('hidden');
-        stopBtn.classList.add('hidden');
+        startContainer.classList.remove('hidden');
+        controlBar.classList.add('hidden');
         distEl.textContent = '0.00';
         timeEl.textContent = '00:00';
         paceEl.textContent = '--:--';
+
+        locked = true;
+        finishBtn.disabled = true;
+        lockBtn.classList.remove('unlocked');
+        lockIcon.innerHTML = '<path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/>';
+
+        pauseBtn.disabled = true;
+        pauseBtn.innerHTML = '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> <span>PAUSE</span>';
+        pauseBtn.classList.remove('resume-state');
     }
 
     startBtn.addEventListener('click', startTracking);
-    pauseBtn.addEventListener('click', pauseTracking);
-    resumeBtn.addEventListener('click', resumeTracking);
-    stopBtn.addEventListener('click', stopTracking);
+    pauseBtn.addEventListener('click', togglePause);
+    lockBtn.addEventListener('click', toggleLock);
+    finishBtn.addEventListener('click', finishRun);
 
     if ('geolocation' in navigator) {
         watchId = navigator.geolocation.watchPosition(onPositionSuccess, onPositionError, {
