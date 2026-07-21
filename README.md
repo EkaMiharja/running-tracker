@@ -2,6 +2,9 @@
 
 Aplikasi web minimalis untuk mencatat, melacak, dan menganalisis aktivitas lari. Dibangun dengan PHP Native, MySQL, Tailwind CSS, Leaflet.js, dan Chart.js.
 
+# Link
+run-tracker.page.gd
+
 ## Fitur
 
 - **Autentikasi** — Registrasi, login, dan manajemen sesi pengguna
