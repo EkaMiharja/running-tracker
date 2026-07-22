@@ -13,6 +13,7 @@ CREATE TABLE activities (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     date DATE NOT NULL,
+    time TIME DEFAULT NULL COMMENT 'waktu lari',
     distance DECIMAL(8,2) NOT NULL COMMENT 'km',
     duration INT NOT NULL COMMENT 'seconds',
     pace DECIMAL(5,2) NOT NULL COMMENT 'min/km',

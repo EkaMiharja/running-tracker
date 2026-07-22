@@ -58,7 +58,7 @@ $title = 'Riwayat - Run Tracker';
                                 <svg class="w-5 h-5 text-[#fc5200]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                             </div>
                             <div>
-                                <p class="font-semibold"><?= formatDate($act['date']) ?></p>
+                                <p class="font-semibold"><?= formatDate($act['date']) ?> <span class="font-semibold text-[#9CA3AF]">pukul <?= formatTime($act['time'] ?? '') ?></span></p>
                                 <div class="flex items-center gap-3 mt-1 text-sm text-[#9CA3AF]">
                                     <span><?= number_format($act['distance'], 2) ?> km</span>
                                     <span><?= formatDuration($act['duration']) ?></span>

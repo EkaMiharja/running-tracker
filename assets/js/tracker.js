@@ -8,6 +8,37 @@ document.addEventListener('DOMContentLoaded', function () {
         maxZoom: 19,
     }).addTo(map);
 
+    var PageLockControl = L.Control.extend({
+        options: { position: 'topright' },
+        onAdd: function() {
+            var div = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
+            div.innerHTML =
+                '<button id="pageLockBtn" title="Kunci halaman" style="background:white;width:36px;height:36px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:4px;box-shadow:0 2px 6px rgba(0,0,0,0.3);">' +
+                '<svg id="pageLockIcon" width="18" height="18" viewBox="0 0 24 24" fill="#374151"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/></svg>' +
+                '</button>';
+            L.DomEvent.disableClickPropagation(div);
+            return div;
+        }
+    });
+    new PageLockControl().addTo(map);
+
+    document.getElementById('pageLockBtn').addEventListener('click', function(e) {
+        e.stopPropagation();
+        pageLocked = !pageLocked;
+        var icon = document.getElementById('pageLockIcon');
+        if (pageLocked) {
+            document.body.classList.add('page-locked');
+            icon.setAttribute('fill', '#EF4444');
+            icon.innerHTML = '<path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/>';
+            this.title = 'Kunci halaman aktif';
+        } else {
+            document.body.classList.remove('page-locked');
+            icon.setAttribute('fill', '#374151');
+            icon.innerHTML = '<path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z"/>';
+            this.title = 'Kunci halaman';
+        }
+    });
+
     const startBtn = document.getElementById('trackStart');
     const pauseBtn = document.getElementById('trackPause');
     const lockBtn = document.getElementById('trackLock');
@@ -42,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let lastKmThreshold = 0;
     let kmStartTime = null;
     let kmStartPos = null;
+    let pageLocked = false;
 
     function setGpsStatus(ok) {
         if (ok) {

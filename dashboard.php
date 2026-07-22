@@ -121,7 +121,7 @@ $title = 'Dashboard - Run Tracker';
                     <a href="activity/detail.php?id=<?= $act['id'] ?>" class="block bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="font-semibold"><?= formatDate($act['date']) ?></p>
+                                <p class="font-semibold"><?= formatDate($act['date']) ?> <span class="font-semibold text-[#9CA3AF]">pukul <?= formatTime($act['time'] ?? '') ?></span></p>
                                 <div class="flex items-center gap-3 mt-1 text-sm text-[#9CA3AF]">
                                     <span><?= number_format($act['distance'], 2) ?> km</span>
                                     <span><?= formatDuration($act['duration']) ?></span>

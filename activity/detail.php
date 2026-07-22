@@ -59,7 +59,7 @@ $title = 'Detail - Run Tracker';
         <div class="flex items-center justify-between mb-4">
             <div>
                 <p class="text-sm text-[#9CA3AF]">Tanggal</p>
-                <p class="font-semibold"><?= formatDate($activity['date']) ?></p>
+                <p class="font-semibold"><?= formatDate($activity['date']) ?> <?php if (formatTime($activity['time'] ?? '')): ?><span class="font-semibold text-[#9CA3AF]"> pukul <?= formatTime($activity['time']) ?></span><?php endif; ?></p>
             </div>
             <span class="px-3 py-1 rounded-full text-xs font-medium <?= $activity['type'] === 'gps' ? 'bg-sky-500/10 text-sky-500 border border-sky-500/30' : 'bg-[#4B5563]/30 text-[#9CA3AF] border border-[#4B5563]' ?>">
                 <?= $activity['type'] === 'gps' ? 'GPS Tracking' : 'Input Manual' ?>

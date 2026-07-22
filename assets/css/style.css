@@ -214,3 +214,11 @@ body {
 .leaflet-container {
     border-radius: 12px;
 }
+
+.page-locked nav a,
+.page-locked nav button,
+.page-locked .fixed.bottom-0 a {
+    pointer-events: none;
+    opacity: 0.4 !important;
+}
+

@@ -9,6 +9,7 @@ $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $date = sanitize($_POST['date'] ?? '');
+    $time = sanitize($_POST['time'] ?? '');
     $distance = str_replace(',', '.', sanitize($_POST['distance'] ?? ''));
     $hours = (int)($_POST['hours'] ?? 0);
     $minutes = (int)($_POST['minutes'] ?? 0);
@@ -16,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $notes = sanitize($_POST['notes'] ?? '');
 
     $duration = $hours * 3600 + $minutes * 60 + $seconds;
+    $time = empty($time) ? date('H:i:s') : $time;
 
     if (empty($date) || empty($distance) || $duration <= 0) {
         $error = 'Tanggal, jarak, dan durasi harus diisi dengan benar';
@@ -23,8 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Jarak harus berupa angka positif';
     } else {
         $pace = $duration / 60 / $distance;
-        $stmt = $pdo->prepare("INSERT INTO activities (user_id, date, distance, duration, pace, notes, type) VALUES (?, ?, ?, ?, ?, ?, 'manual')");
-        $stmt->execute([$user['id'], $date, $distance, $duration, $pace, $notes]);
+        $stmt = $pdo->prepare("INSERT INTO activities (user_id, date, time, distance, duration, pace, notes, type) VALUES (?, ?, ?, ?, ?, ?, ?, 'manual')");
+        $stmt->execute([$user['id'], $date, $time, $distance, $duration, $pace, $notes]);
         $success = 'Aktivitas berhasil dicatat!';
     }
 }
@@ -51,6 +53,10 @@ $title = 'Catat Manual - Run Tracker';
                 <div>
                     <label class="block text-sm font-medium text-[#9CA3AF] mb-1">Tanggal</label>
                     <input type="date" name="date" class="input-field" value="<?= date('Y-m-d') ?>" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-[#9CA3AF] mb-1">Jam</label>
+                    <input type="time" name="time" class="input-field" value="<?= date('H:i') ?>">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-[#9CA3AF] mb-1">Jarak (km)</label>
