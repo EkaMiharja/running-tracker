@@ -73,7 +73,7 @@ $title = 'Lacak Lari - Run Tracker';
 
 <div id="menuSheet" class="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl shadow-2xl transform translate-y-full transition-transform duration-300 ease-out">
     <div class="w-10 h-1 bg-gray-300 rounded-full mx-auto mt-3 mb-2"></div>
-    <div class="px-6 pb-8 pt-2">
+    <div class="px-6 pb-28 pt-2">
         <h2 class="text-lg font-bold mb-4 text-[#1F2937]">Mode Lari</h2>
         <a href="track.php" class="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors border border-gray-200 mb-3">
             <div class="w-12 h-12 rounded-full bg-[#fc5200]/10 flex items-center justify-center">

@@ -24,21 +24,24 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     new PageLockControl().addTo(map);
 
+    function syncPageLockState() {
+        var icon = document.getElementById('pageLockIcon');
+        var btn = document.getElementById('pageLockBtn');
+        if (pageLocked) {
+            document.body.classList.add('page-locked');
+            if (icon) { icon.setAttribute('fill', '#EF4444'); icon.innerHTML = '<path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/>'; }
+            if (btn) btn.title = 'Kunci halaman aktif';
+        } else {
+            document.body.classList.remove('page-locked');
+            if (icon) { icon.setAttribute('fill', '#374151'); icon.innerHTML = '<path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z"/>'; }
+            if (btn) btn.title = 'Kunci halaman';
+        }
+    }
+
     document.getElementById('pageLockBtn').addEventListener('click', function(e) {
         e.stopPropagation();
         pageLocked = !pageLocked;
-        var icon = document.getElementById('pageLockIcon');
-        if (pageLocked) {
-            document.body.classList.add('page-locked');
-            icon.setAttribute('fill', '#EF4444');
-            icon.innerHTML = '<path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/>';
-            this.title = 'Kunci halaman aktif';
-        } else {
-            document.body.classList.remove('page-locked');
-            icon.setAttribute('fill', '#374151');
-            icon.innerHTML = '<path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z"/>';
-            this.title = 'Kunci halaman';
-        }
+        syncPageLockState();
     });
 
     var startBtn = document.getElementById('trackStart');
@@ -54,10 +57,21 @@ document.addEventListener('DOMContentLoaded', function () {
     var gpsStatus = document.getElementById('gpsStatus');
     var gpsStatusText = document.getElementById('gpsStatusText');
 
-var intervalLabel = document.getElementById('intervalLabel');
+    var intervalLabel = document.getElementById('intervalLabel');
     var intervalStatusText = document.getElementById('intervalStatusText');
     var intervalTimer = document.getElementById('intervalTimer');
-    
+    var circleTimerNum = document.getElementById('circleTimerNum');
+    var circleTimerStatus = document.getElementById('circleTimerStatus');
+    var progressRing = document.getElementById('progressRing');
+    var headerCard = document.getElementById('headerCard');
+    var viewMap = document.getElementById('viewMap');
+    var viewTimer = document.getElementById('viewTimer');
+    var tabMap = document.getElementById('tabMap');
+    var tabTimer = document.getElementById('tabTimer');
+    var viewContainer = document.getElementById('viewContainer');
+    var currentView = 'map';
+    var circumference = 2 * Math.PI * 108;
+    var phaseTotalSeconds = 0;
     var tracking = false;
     var paused = false;
     var locked = true;
@@ -104,6 +118,80 @@ var intervalLabel = document.getElementById('intervalLabel');
     }
 
     setGpsStatus(false);
+
+    function switchView(view) {
+        currentView = view;
+        if (view === 'map') {
+            viewMap.classList.remove('hidden');
+            viewTimer.classList.add('hidden');
+            headerCard.classList.remove('hidden');
+            tabMap.classList.add('bg-[#fc5200]', 'text-white');
+            tabMap.classList.remove('text-[#9CA3AF]');
+            tabTimer.classList.remove('bg-[#fc5200]', 'text-white');
+            tabTimer.classList.add('text-[#9CA3AF]');
+            setTimeout(function () { map.invalidateSize(); }, 100);
+        } else {
+            viewMap.classList.add('hidden');
+            viewTimer.classList.remove('hidden');
+            headerCard.classList.add('hidden');
+            tabTimer.classList.add('bg-[#fc5200]', 'text-white');
+            tabTimer.classList.remove('text-[#9CA3AF]');
+            tabMap.classList.remove('bg-[#fc5200]', 'text-white');
+            tabMap.classList.add('text-[#9CA3AF]');
+        }
+    }
+
+    function updateCircularTimer() {
+        var totalSec = getPhaseTotalSeconds();
+        var remaining = totalSec - intervalElapsed;
+        if (remaining < 0) remaining = 0;
+
+        var displayTime;
+        if (totalSec === Infinity) {
+            displayTime = intervalElapsed;
+        } else {
+            displayTime = remaining;
+        }
+
+        circleTimerNum.textContent = formatTime(displayTime);
+        circleTimerStatus.textContent = intervalStatusText.textContent;
+        circleTimerStatus.style.color = intervalStatusText.style.color;
+
+        if (totalSec !== Infinity && totalSec > 0) {
+            var progress = remaining / totalSec;
+            var offset = circumference * (1 - progress);
+            progressRing.style.strokeDashoffset = offset;
+        } else {
+            progressRing.style.strokeDashoffset = 0;
+        }
+    }
+
+    function resetCircularTimer() {
+        progressRing.style.strokeDashoffset = 0;
+        circleTimerNum.textContent = '00:00';
+    }
+
+    tabMap.addEventListener('click', function () { switchView('map'); });
+    tabTimer.addEventListener('click', function () { switchView('timer'); });
+
+    var touchStartX = 0;
+    var touchStartY = 0;
+    viewContainer.addEventListener('touchstart', function (e) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    viewContainer.addEventListener('touchend', function (e) {
+        var dx = e.changedTouches[0].clientX - touchStartX;
+        var dy = e.changedTouches[0].clientY - touchStartY;
+        if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+            if (dx < 0 && currentView === 'map') {
+                switchView('timer');
+            } else if (dx > 0 && currentView === 'timer') {
+                switchView('map');
+            }
+        }
+    }, { passive: true });
 
     function formatTime(secs) {
         var m = Math.floor(secs / 60);
@@ -193,22 +281,27 @@ var intervalLabel = document.getElementById('intervalLabel');
             label = 'Warm-up';
             intervalStatusText.textContent = 'WARM-UP';
             intervalStatusText.style.color = '#3B82F6';
+            progressRing.style.stroke = '#3B82F6';
         } else if (intervalPhase === 'high') {
             label = 'Interval ' + currentInterval + ' / ' + totalIntervals;
             intervalStatusText.textContent = 'HIGH INTENSITY';
             intervalStatusText.style.color = '#fc5200';
+            progressRing.style.stroke = '#fc5200';
         } else if (intervalPhase === 'recovery') {
             label = 'Recovery ' + currentInterval + ' / ' + totalIntervals;
             intervalStatusText.textContent = 'RECOVERY';
             intervalStatusText.style.color = '#10B981';
+            progressRing.style.stroke = '#10B981';
         } else if (intervalPhase === 'cooldown') {
             label = 'Cool-down';
             intervalStatusText.textContent = 'COOL-DOWN';
             intervalStatusText.style.color = '#3B82F6';
+            progressRing.style.stroke = '#3B82F6';
         } else if (intervalPhase === 'done') {
             label = 'Selesai';
             intervalStatusText.textContent = 'FINISHED';
             intervalStatusText.style.color = '#6B7280';
+            progressRing.style.stroke = '#6B7280';
         }
 
         intervalLabel.textContent = label;
@@ -229,6 +322,7 @@ var intervalLabel = document.getElementById('intervalLabel');
                 intervalPausedTime = 0;
                 currentInterval = 1;
                 intervalPhase = 'high';
+                resetCircularTimer();
                 updateIntervalDisplay();
             }
         } else if (intervalPhase === 'high') {
@@ -242,6 +336,7 @@ var intervalLabel = document.getElementById('intervalLabel');
                 intervalStartTime = Date.now() - pausedTime;
                 intervalPausedTime = 0;
                 intervalPhase = 'recovery';
+                resetCircularTimer();
                 updateIntervalDisplay();
             }
         } else if (intervalPhase === 'recovery') {
@@ -264,6 +359,7 @@ var intervalLabel = document.getElementById('intervalLabel');
                 } else {
                     intervalPhase = 'high';
                 }
+                resetCircularTimer();
                 updateIntervalDisplay();
             }
         } else if (intervalPhase === 'cooldown') {
@@ -272,6 +368,7 @@ var intervalLabel = document.getElementById('intervalLabel');
             if (cfg.cooldown.type === 'duration' && phaseTime >= coolDuration) coolMet = true;
             if (coolMet) {
                 intervalPhase = 'done';
+                resetCircularTimer();
                 updateIntervalDisplay();
             }
         }
@@ -450,6 +547,7 @@ var intervalLabel = document.getElementById('intervalLabel');
                     intervalTimer.textContent = formatTime(remainingSec);
                 }
 
+                updateCircularTimer();
                 checkIntervalTransition();
             }
         }, 200);
@@ -556,6 +654,9 @@ var intervalLabel = document.getElementById('intervalLabel');
         intervalStatusText.textContent = 'READY';
         intervalStatusText.style.color = '#6B7280';
         intervalLabel.textContent = 'Interval';
+        resetCircularTimer();
+        progressRing.style.stroke = '#fc5200';
+        switchView('map');
 
         locked = true;
         finishBtn.disabled = true;

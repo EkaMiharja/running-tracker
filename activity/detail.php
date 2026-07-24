@@ -97,24 +97,19 @@ $title = 'Detail - Run Tracker';
     $interval_data = json_decode($activity['interval_data'] ?? '', true);
     if ($activity['type'] === 'interval' && $interval_data && !empty($interval_data['phases'])): ?>
         <div class="card mb-6">
-            <h2 class="text-lg font-semibold mb-4">Detail Interval</h2>
-            <div class="space-y-2">
-                <?php $phaseNum = 0; ?>
-                <?php foreach ($interval_data['phases'] as $phase): $phaseNum++; ?>
-                    <div class="flex items-center justify-between p-3 rounded-xl <?= $phase['type'] === 'high' ? 'bg-[#fc5200]/10 border border-[#fc5200]/20' : 'bg-[#10B981]/10 border border-[#10B981]/20' ?>">
-                        <div class="flex items-center gap-3">
-                            <span class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold <?= $phase['type'] === 'high' ? 'bg-[#fc5200] text-white' : 'bg-[#10B981] text-white' ?>"><?= $phaseNum ?></span>
-                            <div>
-                                <p class="font-semibold text-sm <?= $phase['type'] === 'high' ? 'text-[#fc5200]' : 'text-[#10B981]' ?>"><?= $phase['type'] === 'high' ? 'HIGH INTENSITY' : 'Recovery' ?></p>
-                                <p class="text-xs text-[#9CA3AF]">Interval <?= $phase['interval'] ?></p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <p class="font-semibold text-sm"><?= number_format($phase['distance'], 3) ?> km</p>
-                            <p class="text-xs text-[#9CA3AF]"><?= formatDuration($phase['time']) ?></p>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold">Detail Interval</h2>
+                <div class="flex bg-gray-100 rounded-lg p-0.5">
+                    <button id="btnTime" onclick="switchIntervalView('time')" class="interval-toggle px-3 py-1 text-xs font-semibold rounded-md bg-[#fc5200] text-white transition-all">Waktu</button>
+                    <button id="btnPace" onclick="switchIntervalView('pace')" class="interval-toggle px-3 py-1 text-xs font-semibold rounded-md text-[#9CA3AF] transition-all">Pace</button>
+                </div>
+            </div>
+            <div class="relative" style="height: 220px;">
+                <canvas id="intervalChart"></canvas>
+            </div>
+            <div id="intervalLegend" class="flex justify-center gap-4 mt-3">
+                <span class="flex items-center gap-1.5 text-xs text-[#6B7280]"><span class="w-3 h-3 rounded-sm bg-[#fc5200]"></span> High Intensity</span>
+                <span class="flex items-center gap-1.5 text-xs text-[#6B7280]"><span class="w-3 h-3 rounded-sm bg-[#10B981]"></span> Recovery</span>
             </div>
         </div>
     <?php endif; ?>
@@ -245,6 +240,112 @@ document.addEventListener('DOMContentLoaded', function () {
                             const s = Math.round((v - m) * 60);
                             return m + ':' + String(s).padStart(2, '0');
                         }
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+<?php endif; ?>
+
+<?php
+$interval_data = json_decode($activity['interval_data'] ?? '', true);
+if ($activity['type'] === 'interval' && $interval_data && !empty($interval_data['phases'])):
+    $phases = $interval_data['phases'];
+    $chartLabels = [];
+    $chartColors = [];
+    $chartTime = [];
+    $chartPace = [];
+    foreach ($phases as $i => $p) {
+        $num = $i + 1;
+        $chartLabels[] = ($p['type'] === 'high' ? 'H' : 'R') . $p['interval'];
+        $chartColors[] = $p['type'] === 'high' ? '#fc5200' : '#10B981';
+        $chartTime[] = round($p['time']);
+        $dist = $p['distance'] ?? 0;
+        $t = $p['time'] ?? 0;
+        $chartPace[] = ($t > 0 && $dist > 0) ? round($t / 60 / $dist, 2) : 0;
+    }
+?>
+<script>
+var intervalPhases = <?= json_encode($phases) ?>;
+var intervalLabels = <?= json_encode($chartLabels) ?>;
+var intervalColors = <?= json_encode($chartColors) ?>;
+var intervalTimeData = <?= json_encode($chartTime) ?>;
+var intervalPaceData = <?= json_encode($chartPace) ?>;
+var intervalChart = null;
+var currentView = 'time';
+
+function formatSec(secs) {
+    var m = Math.floor(secs / 60);
+    var s = Math.round(secs % 60);
+    return m + ':' + String(s).padStart(2, '0');
+}
+
+function formatPaceVal(minPerKm) {
+    if (minPerKm <= 0) return '-';
+    var m = Math.floor(minPerKm);
+    var s = Math.round((minPerKm - m) * 60);
+    return m + ':' + String(s).padStart(2, '0') + ' /km';
+}
+
+function switchIntervalView(view) {
+    currentView = view;
+    document.getElementById('btnTime').className = 'interval-toggle px-3 py-1 text-xs font-semibold rounded-md transition-all ' + (view === 'time' ? 'bg-[#fc5200] text-white' : 'text-[#9CA3AF]');
+    document.getElementById('btnPace').className = 'interval-toggle px-3 py-1 text-xs font-semibold rounded-md transition-all ' + (view === 'pace' ? 'bg-[#fc5200] text-white' : 'text-[#9CA3AF]');
+    if (!intervalChart) return;
+    if (view === 'time') {
+        intervalChart.data.datasets[0].data = intervalTimeData;
+        intervalChart.options.scales.y.reverse = false;
+        intervalChart.options.scales.y.ticks.callback = function(v) { return formatSec(v); };
+        intervalChart.options.plugins.tooltip.callbacks.label = function(ctx) { return 'Waktu: ' + formatSec(ctx.raw); };
+    } else {
+        intervalChart.data.datasets[0].data = intervalPaceData;
+        intervalChart.options.scales.y.reverse = true;
+        intervalChart.options.scales.y.ticks.callback = function(v) { return formatPaceVal(v); };
+        intervalChart.options.plugins.tooltip.callbacks.label = function(ctx) { return 'Pace: ' + formatPaceVal(ctx.raw); };
+    }
+    intervalChart.update();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    var canvas = document.getElementById('intervalChart');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    intervalChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: intervalLabels,
+            datasets: [{
+                data: intervalTimeData,
+                backgroundColor: intervalColors,
+                borderRadius: 6,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function (ctx) { return 'Waktu: ' + formatSec(ctx.raw); }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#6B7280', font: { size: 11 } }
+                },
+                y: {
+                    reverse: false,
+                    grid: { color: 'rgba(0,0,0,0.06)' },
+                    ticks: {
+                        color: '#6B7280',
+                        font: { size: 11 },
+                        callback: function (v) { return formatSec(v); }
                     }
                 }
             }

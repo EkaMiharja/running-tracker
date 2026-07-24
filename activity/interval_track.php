@@ -41,7 +41,7 @@ $title = 'Interval - Run Tracker';
 <?php include '../includes/navbar.php'; ?>
 
 <div class="relative h-[calc(100vh-57px)] flex flex-col">
-    <div class="absolute top-4 left-0 right-0 z-20 flex justify-center px-4 pointer-events-none">
+    <div id="headerCard" class="absolute top-4 left-0 right-0 z-20 flex justify-center px-4 pointer-events-none">
         <div class="bg-white/90 backdrop-blur-md rounded-2xl px-5 py-3 border border-gray-200/50 inline-flex flex-col items-center gap-0.5 pointer-events-auto">
             <p id="intervalLabel" class="text-xs text-[#9CA3AF] font-semibold tracking-wide">Interval 1 / <?= $interval_count ?></p>
             <p id="intervalStatusText" class="text-lg font-extrabold tracking-wide">HIGH INTENSITY</p>
@@ -49,7 +49,32 @@ $title = 'Interval - Run Tracker';
         </div>
     </div>
 
-    <div id="map" class="flex-1 z-0"></div>
+    <div id="viewTabs" class="absolute top-[88px] left-0 right-0 z-20 flex justify-center gap-1 pointer-events-none">
+        <div class="bg-white/80 backdrop-blur-sm rounded-full border border-gray-200/50 inline-flex overflow-hidden pointer-events-auto">
+            <button id="tabMap" class="view-tab px-4 py-1.5 text-xs font-semibold transition-colors bg-[#fc5200] text-white" data-view="map">MAP</button>
+            <button id="tabTimer" class="view-tab px-4 py-1.5 text-xs font-semibold transition-colors text-[#9CA3AF]" data-view="timer">TIMER</button>
+        </div>
+    </div>
+
+    <div id="viewContainer" class="flex-1 relative overflow-hidden">
+        <div id="viewMap" class="absolute inset-0 z-0">
+            <div id="map" class="w-full h-full"></div>
+        </div>
+
+        <div id="viewTimer" class="absolute inset-0 z-10 hidden flex flex-col items-center justify-center bg-gray-50 pt-8 pb-40">
+            <div class="circular-timer-wrapper">
+                <svg class="circular-timer-svg" viewBox="0 0 240 240">
+                    <circle class="circular-timer-bg" cx="120" cy="120" r="108" fill="none" stroke="#E5E7EB" stroke-width="10"/>
+                    <circle id="progressRing" class="circular-timer-ring" cx="120" cy="120" r="108" fill="none" stroke="#fc5200" stroke-width="10" stroke-linecap="round" stroke-dasharray="678.58" stroke-dashoffset="0" transform="rotate(-90 120 120)"/>
+                </svg>
+                <div class="circular-timer-inner">
+                    <p id="circleTimerNum" class="text-6xl font-black tabular-nums text-[#1F2937]">00:00</p>
+                    <p id="circleTimerStatus" class="text-sm font-extrabold tracking-wide mt-1">HIGH INTENSITY</p>
+                    <p class="text-xs text-[#9CA3AF] mt-2">Sisa waktu interval ini</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="absolute top-4 left-4 z-20 flex items-center gap-2 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-xl border border-gray-200">
         <div id="gpsStatus" class="w-3 h-3 rounded-full bg-[#EF4444] animate-pulse"></div>
