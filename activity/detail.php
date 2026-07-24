@@ -61,10 +61,24 @@ $title = 'Detail - Run Tracker';
                 <p class="text-sm text-[#9CA3AF]">Tanggal</p>
                 <p class="font-semibold"><?= formatDate($activity['date']) ?> <?php if (formatTime($activity['time'] ?? '')): ?><span class="font-semibold text-[#9CA3AF]"> pukul <?= formatTime($activity['time']) ?></span><?php endif; ?></p>
             </div>
-            <span class="px-3 py-1 rounded-full text-xs font-medium <?= $activity['type'] === 'gps' ? 'bg-sky-500/10 text-sky-500 border border-sky-500/30' : 'bg-[#4B5563]/30 text-[#9CA3AF] border border-[#4B5563]' ?>">
-                <?= $activity['type'] === 'gps' ? 'GPS Tracking' : 'Input Manual' ?>
+            <span class="px-3 py-1 rounded-full text-xs font-medium <?php
+                if ($activity['type'] === 'gps') echo 'bg-sky-500/10 text-sky-500 border border-sky-500/30';
+                elseif ($activity['type'] === 'interval') echo 'bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/30';
+                else echo 'bg-[#4B5563]/30 text-[#9CA3AF] border border-[#4B5563]';
+            ?>">
+                <?php
+                if ($activity['type'] === 'gps') echo 'GPS Tracking';
+                elseif ($activity['type'] === 'interval') echo 'Interval Training';
+                else echo 'Input Manual';
+                ?>
             </span>
         </div>
+        <?php if ($activity['workout_name']): ?>
+            <div class="bg-gray-50 rounded-xl p-4 mt-3">
+                <p class="text-sm text-[#9CA3AF]">Workout</p>
+                <p class="mt-1 font-semibold"><?= htmlspecialchars($activity['workout_name']) ?></p>
+            </div>
+        <?php endif; ?>
         <?php if ($activity['notes']): ?>
             <div class="bg-gray-50 rounded-xl p-4 mt-3">
                 <p class="text-sm text-[#9CA3AF]">Catatan</p>
@@ -78,6 +92,32 @@ $title = 'Detail - Run Tracker';
             </button>
         </form>
     </div>
+
+    <?php
+    $interval_data = json_decode($activity['interval_data'] ?? '', true);
+    if ($activity['type'] === 'interval' && $interval_data && !empty($interval_data['phases'])): ?>
+        <div class="card mb-6">
+            <h2 class="text-lg font-semibold mb-4">Detail Interval</h2>
+            <div class="space-y-2">
+                <?php $phaseNum = 0; ?>
+                <?php foreach ($interval_data['phases'] as $phase): $phaseNum++; ?>
+                    <div class="flex items-center justify-between p-3 rounded-xl <?= $phase['type'] === 'high' ? 'bg-[#fc5200]/10 border border-[#fc5200]/20' : 'bg-[#10B981]/10 border border-[#10B981]/20' ?>">
+                        <div class="flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold <?= $phase['type'] === 'high' ? 'bg-[#fc5200] text-white' : 'bg-[#10B981] text-white' ?>"><?= $phaseNum ?></span>
+                            <div>
+                                <p class="font-semibold text-sm <?= $phase['type'] === 'high' ? 'text-[#fc5200]' : 'text-[#10B981]' ?>"><?= $phase['type'] === 'high' ? 'HIGH INTENSITY' : 'Recovery' ?></p>
+                                <p class="text-xs text-[#9CA3AF]">Interval <?= $phase['interval'] ?></p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-semibold text-sm"><?= number_format($phase['distance'], 3) ?> km</p>
+                            <p class="text-xs text-[#9CA3AF]"><?= formatDuration($phase['time']) ?></p>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    <?php endif; ?>
 
     <?php if (!empty($pace_per_km)): ?>
         <div class="card mb-6">

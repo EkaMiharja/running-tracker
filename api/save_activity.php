@@ -22,6 +22,8 @@ $route_path = $input['route_path'] ?? null;
 $pace_per_km = isset($input['pace_per_km']) ? json_encode($input['pace_per_km']) : null;
 $distance_markers = isset($input['distance_markers']) ? json_encode($input['distance_markers']) : null;
 $type = $input['type'] ?? 'gps';
+$workout_name = $input['workout_name'] ?? null;
+$interval_data = isset($input['interval_data']) ? json_encode($input['interval_data']) : null;
 $date = date('Y-m-d');
 $time = date('H:i:s');
 
@@ -31,8 +33,8 @@ if ($distance <= 0 || $duration <= 0) {
 }
 
 try {
-    $stmt = $pdo->prepare("INSERT INTO activities (user_id, date, time, distance, duration, pace, route_path, pace_per_km, distance_markers, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$user['id'], $date, $time, $distance, $duration, $pace, $route_path, $pace_per_km, $distance_markers, $type]);
+    $stmt = $pdo->prepare("INSERT INTO activities (user_id, date, time, distance, duration, pace, route_path, pace_per_km, distance_markers, type, workout_name, interval_data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$user['id'], $date, $time, $distance, $duration, $pace, $route_path, $pace_per_km, $distance_markers, $type, $workout_name, $interval_data]);
     $id = $pdo->lastInsertId();
     echo json_encode(['success' => true, 'id' => $id]);
 } catch (Exception $e) {

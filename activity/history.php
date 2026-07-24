@@ -65,6 +65,8 @@ $title = 'Riwayat - Run Tracker';
                                     <span><?= formatPace($act['pace']) ?></span>
                                     <?php if ($act['type'] === 'gps'): ?>
                                         <span class="text-sky-500 text-xs border border-sky-500/30 px-2 py-0.5 rounded-full">GPS</span>
+                                    <?php elseif ($act['type'] === 'interval'): ?>
+                                        <span class="text-[#10B981] text-xs border border-[#10B981]/30 px-2 py-0.5 rounded-full">Interval</span>
                                     <?php else: ?>
                                         <span class="text-[#9CA3AF] text-xs border border-[#4B5563] px-2 py-0.5 rounded-full">Manual</span>
                                     <?php endif; ?>
